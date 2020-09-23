@@ -10,6 +10,7 @@ import java.util.Scanner;
 
 import static com.ijkalra.stackmachine.config.Constants.ERROR_MSG;
 import static com.ijkalra.stackmachine.config.Constants.INFO_MSG;
+import static com.ijkalra.stackmachine.utility.Utils.isBlankString;
 
 public class MenuService {
 
@@ -34,7 +35,7 @@ public class MenuService {
             // prompt user
             System.out.print("\nEnter instructions: ");
             // get user input
-            String inputLine = scanner.nextLine();
+            String inputLine = scanner.nextLine().trim();
             // split the input line. The first part is our command. (in case of push command we have 2 parts)
             String inputInstruction = inputLine.split("\\s+")[0];
             /*
@@ -123,7 +124,6 @@ public class MenuService {
                     }
                     break;
                 case QUIT:
-                    System.out.println("INFO: Exiting application. GoodBye...");
                     exitFunction = true;
                     break;
                 default:

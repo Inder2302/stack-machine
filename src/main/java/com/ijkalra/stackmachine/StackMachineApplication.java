@@ -21,6 +21,7 @@ public class StackMachineApplication {
 
             MenuService menuService = new MenuService(new CustomStack(initialCapacity));
             menuService.startStackMachine();
+            System.out.println("INFO: Exiting application. GoodBye...");
         }
 
     }
