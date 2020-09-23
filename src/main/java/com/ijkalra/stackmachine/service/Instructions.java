@@ -22,6 +22,9 @@ public enum Instructions {
         this.instructionDesc = instructionDesc;
     }
 
+    /*
+    Checks if a strings is a valid name for this enum
+     */
     public static boolean isValidInstruction(String val) {
         return Arrays.stream(values()).map(Enum::name).anyMatch(v -> v.equalsIgnoreCase(val));
     }
@@ -29,5 +32,4 @@ public enum Instructions {
     public String getInstructionDesc() {
         return instructionDesc;
     }
-
 }

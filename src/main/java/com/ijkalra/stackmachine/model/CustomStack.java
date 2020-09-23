@@ -4,6 +4,8 @@ import com.ijkalra.stackmachine.exception.DivideByZeroException;
 import com.ijkalra.stackmachine.exception.EmptyStackException;
 import com.ijkalra.stackmachine.exception.NotEnoughElementsException;
 
+import java.util.Arrays;
+
 import static com.ijkalra.stackmachine.config.Constants.*;
 
 public class CustomStack {
@@ -57,6 +59,13 @@ public class CustomStack {
             primaryStack = primaryStackWithMoreCap;
             secondaryStack = secondaryStackWithMoreCap;
         }
+
+        /*
+        // for debugging purpose
+        Arrays.stream(primaryStack).forEach(System.out::println);
+        System.out.printf("=====>%d\n",primaryStackTop);
+        Arrays.stream(secondaryStack).forEach(System.out::println);
+        System.out.printf("=====>%d\n",secondaryStackTop);*/
     }
 
     // Regular pop method with backup
@@ -122,6 +131,7 @@ public class CustomStack {
 
     // points the top pointer to "-1" to give the effect of clear stack
     public void clearStack() {
+        backUpPrimaryStack();
         primaryStackTop = -1;
     }
 

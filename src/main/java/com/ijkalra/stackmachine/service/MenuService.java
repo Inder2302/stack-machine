@@ -8,18 +8,22 @@ import com.ijkalra.stackmachine.model.CustomStack;
 import java.util.Arrays;
 import java.util.Scanner;
 
+import static com.ijkalra.stackmachine.config.Constants.ERROR_MSG;
+import static com.ijkalra.stackmachine.config.Constants.INFO_MSG;
+
 public class MenuService {
 
-    private CustomStack customStack;
-
+    // kept as final because CustomStack itself wont change.
+    // its elements will change in value. but customStack itself will keep pointing to the what is set in constructor.
+    private final CustomStack customStack;
+    
+    /* Constructor to set the custom stack */
     public MenuService(CustomStack customStack) {
         this.customStack = customStack;
     }
 
     public void startStackMachine() {
-        final String errorMessage = "Invalid Command. Reason: %s. \n";
-
-        // print the menu items
+        // print the menu items from Inst
         printMenu();
         // Create Scanner to get user input
         Scanner scanner = new Scanner (System.in);
@@ -28,10 +32,10 @@ public class MenuService {
 
         do {
             // prompt user
-            System.out.print("Enter instructions: ");
+            System.out.print("\nEnter instructions: ");
             // get user input
             String inputLine = scanner.nextLine();
-            // split the input line to
+            // split the input line. The first part is our command. (in case of push command we have 2 parts)
             String inputInstruction = inputLine.split("\\s+")[0];
             /*
             Other way to validate an enum value can be a try catch block
@@ -45,7 +49,7 @@ public class MenuService {
             */
 
             if (! Instructions.isValidInstruction(inputInstruction.toUpperCase())) {
-                System.out.println("Invalid instruction. Please try again...");
+                System.out.printf(ERROR_MSG, "Command not supported. Please try again...");
                 continue;
             }
 
@@ -53,66 +57,69 @@ public class MenuService {
             // we are sure the Enum will not raise IllegalArgumentException exception.
             Instructions instruction = Instructions.valueOf(inputInstruction.toUpperCase());
 
+            // Perform action as per instruction.
             switch (instruction) {
                 case PRINT:
                     try {
                         customStack.show();
                     } catch (EmptyStackException e) {
-                        System.out.printf(errorMessage, e.getMessage());
+                        System.out.printf(ERROR_MSG, e.getMessage());
                     }
                     break;
                 case CLEAR:
                     customStack.clearStack();
-                    System.out.println("INFO: Stack emptied.");
+                    System.out.printf(INFO_MSG, "Done. Stack Emptied.");
                     break;
                 case UNDO:
                     customStack.undoLastOperation();
-                    System.out.println("INFO: Last operation reverted.");
+                    System.out.printf(INFO_MSG, "Done. Last operation reverted.");
                     break;
                 case POP:
                     try {
-                        System.out.printf("INFO: Element popped out of stack %s\n",customStack.pop());
+                        System.out.println(customStack.pop());
+                        System.out.printf(INFO_MSG, "Element popped out of stack");
                     } catch (EmptyStackException e) {
-                        System.out.printf(errorMessage, e.getMessage());
+                        System.out.printf(ERROR_MSG, e.getMessage());
                     }
                     break;
                 case PEEK:
                     try {
-                        System.out.printf("INFO: Top Element on stack is: %s\n",customStack.peek());
+                        System.out.println(customStack.peek());
+                        System.out.printf(INFO_MSG, "Element is not removed from the stack");
                     } catch (EmptyStackException e) {
-                        System.out.printf(errorMessage, e.getMessage());
+                        System.out.printf(ERROR_MSG, e.getMessage());
                     }
                     break;
                 case ADD:
                     try {
                         customStack.addTopTwoElements();
-                        System.out.println("INFO: Addition performed");
+                        System.out.printf(INFO_MSG, "Done. Addition performed");
                     } catch (NotEnoughElementsException | EmptyStackException e) {
-                        System.out.printf(errorMessage, e.getMessage());
+                        System.out.printf(ERROR_MSG, e.getMessage());
                     }
                     break;
                 case NEG:
                     try {
                         customStack.negateTopElement();
-                        System.out.println("INFO: Negation performed");
+                        System.out.printf(INFO_MSG, "Done. Negation performed");
                     } catch (NotEnoughElementsException | EmptyStackException e) {
-                        System.out.printf(errorMessage, e.getMessage());
+                        System.out.printf(ERROR_MSG, e.getMessage());
                     }
                     break;
                 case INV:
                     try {
                         customStack.invertTopElement();
-                        System.out.println("INFO: Inversion performed");
+                        System.out.printf(INFO_MSG, "Done. Inversion performed");
                     } catch (EmptyStackException | DivideByZeroException | NotEnoughElementsException e) {
-                        System.out.printf(errorMessage, e.getMessage());
+                        System.out.printf(ERROR_MSG, e.getMessage());
                     }
                     break;
                 case MUL:
                     try {
                         customStack.multiplyTopTwoElements();
-                        System.out.println("INFO: Multiplication performed");
+                        System.out.printf(INFO_MSG, "Done. Multiplication performed");
                     } catch (NotEnoughElementsException | EmptyStackException e) {
-                        System.out.printf(errorMessage, e.getMessage());
+                        System.out.printf(ERROR_MSG, e.getMessage());
                     }
                     break;
                 case QUIT:
@@ -120,18 +127,20 @@ public class MenuService {
                     exitFunction = true;
                     break;
                 default:
-                    // Push
+                    // Default is push operation
                     try {
+                        // take the argument of push opearation
                         String arg = inputLine.split("\\s+")[1];
-                        customStack.push(Integer.parseInt(arg));
+                        customStack.push(Double.parseDouble(arg));
                         System.out.println("INFO: Element pushed to top of stack");
                     } catch (ArrayIndexOutOfBoundsException e) {
-                        System.out.printf(errorMessage, "Element not provided to push");
+                        // if the input instruction does not have any argument for push command
+                        System.out.printf(ERROR_MSG, "Element not provided to push");
                     } catch (NumberFormatException e){
-                        System.out.printf(errorMessage, "Expected numeric element to push");
+                        // if unable to parse Double from the input string
+                        System.out.printf(ERROR_MSG, "Expected numeric element to push");
                     }
             }
-
         } while (!exitFunction);
 
     }
@@ -140,6 +149,6 @@ public class MenuService {
         System.out.println("\t===== Welcome to Stack Machine =====");
         System.out.println("\t====== Valid Instructions =====");
         Arrays.stream(Instructions.values()).forEach(i -> System.out.printf("\t%s:-\t\t%s\n", i.name(), i.getInstructionDesc()));
-        System.out.println("\n");
+        System.out.print("\n");
     }
 }
