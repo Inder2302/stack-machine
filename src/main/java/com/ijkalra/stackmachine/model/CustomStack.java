@@ -262,4 +262,9 @@ public class CustomStack {
         return  (((double)primaryStackTop + 1)/primaryStack.length) >= 0.8;
     }
 
+    // returns the number of elements in the stack
+    // helpful in testing
+    public int getNumberOfElementsInStack() {
+        return primaryStackTop + 1;
+    }
 }
